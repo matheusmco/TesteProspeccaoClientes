@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using TesteTria.Entities;
 using TesteTria.Models;
 
 namespace TesteTria.Controllers
@@ -18,40 +18,48 @@ namespace TesteTria.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ClienteEntity> Post(ClienteModel cliente)
+        public ActionResult<ClienteModel> Post(ClienteModel Cliente)
         {
-
-            _context.Clientes.Add(cliente);
+            Cliente.DataHoraConversa = DateTime.Now;
+            _context.Clientes.Add(Cliente);
             _context.SaveChanges();
-            return ConverterCliente(_context.Clientes.Where(x => x.ClienteId == cliente.ClienteId));
+            var clientes = _context.Clientes.Where(x => x.ClienteId == Cliente.ClienteId).ToList();
+            clientes = ValorizarServico(clientes);
+            return clientes.First();
         }
 
         [HttpGet("Relatorio/{tipo}")]
         public ActionResult<IEnumerable<ClienteModel>> Get(char tipo)
         {
+            var clientes = _context.Clientes.ToList();
+            clientes = ValorizarServico(clientes);
             if (tipo == 'H')
             {
-                return _context.Clientes.OrderBy(x => x.DataHoraConversa).ToList();
-                return _context.Clientes.OrderBy(x => x.DataHoraConversa).ToList();
+                return clientes.OrderBy(x => x.DataHoraConversa).ToList();
             }
-            return _context.Clientes.OrderBy(x => x.NomeContato).ToList();
+            return clientes.OrderBy(x => x.NomeContato).ToList();
         }
 
         [HttpGet("{clienteId}")]
-        public ActionResult<ClienteEntity> Get(int clienteId)
+        public ActionResult<ClienteModel> Get(int clienteId)
         {
-            var cliente = _context.Clientes.Where(x => x.ClienteId == clienteId);
-            if (!cliente.Any())
+            var clientes = _context.Clientes.Where(x => x.ClienteId == clienteId).ToList();
+            if (clientes.Count == 0)
             {
                 return BadRequest("Não foi encontrado nenhum cliente com esse ID");
             }
-            return ConverterCliente(cliente);
+            clientes = ValorizarServico(clientes);
+            return clientes.First();
         }
 
-        private ClienteEntity ConverterCliente(IQueryable<ClienteModel> cliente)
+        private List<ClienteModel> ValorizarServico(List<ClienteModel> clientes)
         {
-            ClienteEntity clienteEntidade = new ClienteEntity(cliente.First(), _context.ServicoModel.Where(x => x.ServicoId == cliente.First().ServicoId).First());
-            return clienteEntidade;
+            clientes.ForEach(x =>
+            {
+                x.Servico = _context.ServicoModel.Where(a => a.ServicoId == x.ServicoId).First();
+            });
+
+            return clientes;
         }
 
         [HttpDelete("{clienteId}")]

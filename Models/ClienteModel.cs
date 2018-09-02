@@ -12,6 +12,6 @@ namespace TesteTria.Models
         public string ConteudoConversa { get; set; }
         public DateTime DataHoraConversa { get; set; }
         public int ServicoId { get; set; }
-        // public virtual ServicoModel Servico { get; set; }
+        public ServicoModel Servico { get; set; }
     }
 }
