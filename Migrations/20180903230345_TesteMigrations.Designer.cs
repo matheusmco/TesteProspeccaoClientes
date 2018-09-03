@@ -9,8 +9,8 @@ using TesteTria.Models;
 namespace TesteTria.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20180903161323_Migrations1")]
-    partial class Migrations1
+    [Migration("20180903230345_TesteMigrations")]
+    partial class TesteMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,7 +51,7 @@ namespace TesteTria.Migrations
 
                     b.HasIndex("ServicoId");
 
-                    b.ToTable("ClienteServicoModel");
+                    b.ToTable("ClientesServicos");
                 });
 
             modelBuilder.Entity("TesteTria.Models.ServicoModel", b =>

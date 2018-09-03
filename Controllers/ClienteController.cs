@@ -18,33 +18,69 @@ namespace TesteTria.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ClienteModel> Post(ClienteModel Cliente)
+        public ActionResult<IEnumerable<ClienteModel>> Post(ClienteModel Cliente)
         {
-            Cliente.DataHoraConversa = DateTime.Now;
-            _context.Clientes.Add(Cliente);
+            var clienteServico1 = new ClienteServicoModel();
+            var clienteServico2 = new ClienteServicoModel();
+            var cliente = new ClienteModel()
+            {
+                NomeEmpresa = "Teste",
+                NomeContato = "Teste",
+                Telefone = "Teste",
+                Email = "Teste",
+                ConteudoConversa = "Teste",
+                DataHoraConversa = DateTime.Now
+            };
+
+            var servico1 = new ServicoModel()
+            {
+                NomeServico = "Teste 1"
+            };
+
+            var servico2 = new ServicoModel()
+            {
+                NomeServico = "Teste 2"
+            };
+
+            clienteServico1.Cliente = cliente;
+            clienteServico1.Servico = servico1;
+
+            clienteServico2.Cliente = cliente;
+            clienteServico2.Servico = servico2;
+
+            cliente.ClienteServico = new List<ClienteServicoModel>();
+            cliente.ClienteServico.Add(clienteServico1);
+            cliente.ClienteServico.Add(clienteServico2);
+
+            _context.Clientes.Add(cliente);
+            _context.Servicos.Add(servico1);
+            _context.Servicos.Add(servico2);
+
             _context.SaveChanges();
-            var clientes = _context.Clientes.Where(x => x.ClienteId == Cliente.ClienteId).ToList();
-            //clientes = ValorizarServico(clientes);
-            return clientes.First();
+
+            return _context.Clientes.ToList();
         }
 
         [HttpGet("Relatorio/{tipo}")]
-        public void Get(char tipo)
+        public ActionResult<IEnumerable<ClienteModel>> Get(char tipo)
         {
             var clientes = _context.Clientes.ToList();
-            clientes.ForEach(x => {
-                x.ClienteServico = _context.ClienteServicoModel.Where(m => m.ClienteId == x.ClienteId).ToList();
+            clientes.ForEach(x =>
+            {
+                x.ClienteServico = _context.ClientesServicos.Where(m => m.ClienteId == x.ClienteId).ToList();
             });
-            clientes.ClienteServico.ForEach(x => {
-                x.Servico = _context.Servicos.Where(m => m.ServicoId == x.ServicoId).ToList();
+            clientes.ForEach(x =>
+            {
+                x.ClienteServico.ForEach(cs =>
+                {
+                    cs.Servico = _context.Servicos.Where(s => s.ServicoId == cs.ServicoId).First();
+                });
             });
-            //clientes = ValorizarServico(clientes);
             if (tipo == 'H')
             {
-                // return clientes.OrderBy(x => x.DataHoraConversa).ToList();
+                return clientes.OrderBy(x => x.DataHoraConversa).ToList();
             }
-            // return clientes.OrderBy(x => x.NomeContato).ToList();
-            // return clientes;
+            return clientes.OrderBy(x => x.NomeContato).ToList();
         }
 
         [HttpGet("{clienteId}")]
@@ -55,7 +91,6 @@ namespace TesteTria.Controllers
             {
                 return BadRequest("Não foi encontrado nenhum cliente com esse ID");
             }
-            //clientes = ValorizarServico(clientes);
             return clientes.First();
         }
 
@@ -76,13 +111,14 @@ namespace TesteTria.Controllers
             _context.SaveChanges();
         }
 
-        // [HttpGet]
-        // [Route("PesquisarServicos")]
-        // public ActionResult<IEnumerable<ServicoModel>> PesquisarServicos()
-        // {
-        //     var a = _context.ServicoModel.ToList();
-        //     return a;
-        // }
+        [HttpGet]
+        [Route("PesquisarServicos")]
+        public ActionResult<IEnumerable<ServicoModel>> PesquisarServicos()
+        {
+            var a = _context.Servicos.ToList();
+            return a;
+        }
+
         [HttpGet("Inicializar")]
         public void Inicializar()
         {

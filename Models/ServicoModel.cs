@@ -14,5 +14,7 @@ namespace TesteTria.Models
             // this.ServicoId = servicoId;
             this.NomeServico = nomeServico;
         }
+
+        public ServicoModel() { }
     }
 }

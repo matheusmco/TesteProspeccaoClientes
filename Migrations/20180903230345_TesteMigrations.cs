@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TesteTria.Migrations
 {
-    public partial class Migrations1 : Migration
+    public partial class TesteMigrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -40,7 +40,7 @@ namespace TesteTria.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClienteServicoModel",
+                name: "ClientesServicos",
                 columns: table => new
                 {
                     ClienteId = table.Column<int>(nullable: false),
@@ -48,15 +48,15 @@ namespace TesteTria.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClienteServicoModel", x => new { x.ClienteId, x.ServicoId });
+                    table.PrimaryKey("PK_ClientesServicos", x => new { x.ClienteId, x.ServicoId });
                     table.ForeignKey(
-                        name: "FK_ClienteServicoModel_Clientes_ClienteId",
+                        name: "FK_ClientesServicos_Clientes_ClienteId",
                         column: x => x.ClienteId,
                         principalTable: "Clientes",
                         principalColumn: "ClienteId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ClienteServicoModel_Servicos_ServicoId",
+                        name: "FK_ClientesServicos_Servicos_ServicoId",
                         column: x => x.ServicoId,
                         principalTable: "Servicos",
                         principalColumn: "ServicoId",
@@ -64,15 +64,15 @@ namespace TesteTria.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClienteServicoModel_ServicoId",
-                table: "ClienteServicoModel",
+                name: "IX_ClientesServicos_ServicoId",
+                table: "ClientesServicos",
                 column: "ServicoId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ClienteServicoModel");
+                name: "ClientesServicos");
 
             migrationBuilder.DropTable(
                 name: "Clientes");

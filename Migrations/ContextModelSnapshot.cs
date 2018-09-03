@@ -49,7 +49,7 @@ namespace TesteTria.Migrations
 
                     b.HasIndex("ServicoId");
 
-                    b.ToTable("ClienteServicoModel");
+                    b.ToTable("ClientesServicos");
                 });
 
             modelBuilder.Entity("TesteTria.Models.ServicoModel", b =>
