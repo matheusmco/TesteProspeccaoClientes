@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace TesteTria.Models
 {
@@ -11,7 +12,7 @@ namespace TesteTria.Models
         public string Email { get; set; }
         public string ConteudoConversa { get; set; }
         public DateTime DataHoraConversa { get; set; }
-        public int ServicoId { get; set; }
-        public ServicoModel Servico { get; set; }
+        // public int ServicoId { get; set; }
+        public List<ClienteServicoModel> ClienteServico { get; set; }
     }
 }

@@ -24,20 +24,27 @@ namespace TesteTria.Controllers
             _context.Clientes.Add(Cliente);
             _context.SaveChanges();
             var clientes = _context.Clientes.Where(x => x.ClienteId == Cliente.ClienteId).ToList();
-            clientes = ValorizarServico(clientes);
+            //clientes = ValorizarServico(clientes);
             return clientes.First();
         }
 
         [HttpGet("Relatorio/{tipo}")]
-        public ActionResult<IEnumerable<ClienteModel>> Get(char tipo)
+        public void Get(char tipo)
         {
             var clientes = _context.Clientes.ToList();
-            clientes = ValorizarServico(clientes);
+            clientes.ForEach(x => {
+                x.ClienteServico = _context.ClienteServicoModel.Where(m => m.ClienteId == x.ClienteId).ToList();
+            });
+            clientes.ClienteServico.ForEach(x => {
+                x.Servico = _context.Servicos.Where(m => m.ServicoId == x.ServicoId).ToList();
+            });
+            //clientes = ValorizarServico(clientes);
             if (tipo == 'H')
             {
-                return clientes.OrderBy(x => x.DataHoraConversa).ToList();
+                // return clientes.OrderBy(x => x.DataHoraConversa).ToList();
             }
-            return clientes.OrderBy(x => x.NomeContato).ToList();
+            // return clientes.OrderBy(x => x.NomeContato).ToList();
+            // return clientes;
         }
 
         [HttpGet("{clienteId}")]
@@ -48,16 +55,16 @@ namespace TesteTria.Controllers
             {
                 return BadRequest("Não foi encontrado nenhum cliente com esse ID");
             }
-            clientes = ValorizarServico(clientes);
+            //clientes = ValorizarServico(clientes);
             return clientes.First();
         }
 
         private List<ClienteModel> ValorizarServico(List<ClienteModel> clientes)
         {
-            clientes.ForEach(x =>
-            {
-                x.Servico = _context.ServicoModel.Where(a => a.ServicoId == x.ServicoId).First();
-            });
+            // clientes.ForEach(x =>
+            // {
+            //     x.Servico = _context.ServicoModel.Where(a => a.ServicoId == x.ServicoId).First();
+            // });
 
             return clientes;
         }
@@ -76,5 +83,18 @@ namespace TesteTria.Controllers
         //     var a = _context.ServicoModel.ToList();
         //     return a;
         // }
+        [HttpGet("Inicializar")]
+        public void Inicializar()
+        {
+            _context.Servicos.AddRange(
+                new ServicoModel("Teste 1"),
+                new ServicoModel("Teste 2"),
+                new ServicoModel("Teste 3"),
+                new ServicoModel("Teste 4"),
+                new ServicoModel("Teste 5"),
+                new ServicoModel("Teste 6")
+            );
+            _context.SaveChanges();
+        }
     }
 }

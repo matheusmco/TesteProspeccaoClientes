@@ -27,8 +27,11 @@ namespace TesteTria
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // services.AddDbContext<Context>(options =>
+            //     options.UseSqlite("Data Source=TesteTria.db")
+            // );
             services.AddDbContext<Context>(options =>
-                options.UseSqlite("Data Source=TesteTria.db")
+                options.UseMySql("server=mysql556.umbler.com;port=41890;database=bancotst;user=isael;password=Admin1502")                    
             );
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

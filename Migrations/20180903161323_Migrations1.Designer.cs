@@ -9,14 +9,15 @@ using TesteTria.Models;
 namespace TesteTria.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20180902122544_TesteTria")]
-    partial class TesteTria
+    [Migration("20180903161323_Migrations1")]
+    partial class Migrations1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.2-rtm-30932");
+                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("TesteTria.Models.ClienteModel", b =>
                 {
@@ -33,15 +34,24 @@ namespace TesteTria.Migrations
 
                     b.Property<string>("NomeEmpresa");
 
-                    b.Property<int?>("ServicoId");
-
                     b.Property<string>("Telefone");
 
                     b.HasKey("ClienteId");
 
+                    b.ToTable("Clientes");
+                });
+
+            modelBuilder.Entity("TesteTria.Models.ClienteServicoModel", b =>
+                {
+                    b.Property<int>("ClienteId");
+
+                    b.Property<int>("ServicoId");
+
+                    b.HasKey("ClienteId", "ServicoId");
+
                     b.HasIndex("ServicoId");
 
-                    b.ToTable("Clientes");
+                    b.ToTable("ClienteServicoModel");
                 });
 
             modelBuilder.Entity("TesteTria.Models.ServicoModel", b =>
@@ -53,14 +63,20 @@ namespace TesteTria.Migrations
 
                     b.HasKey("ServicoId");
 
-                    b.ToTable("ServicoModel");
+                    b.ToTable("Servicos");
                 });
 
-            modelBuilder.Entity("TesteTria.Models.ClienteModel", b =>
+            modelBuilder.Entity("TesteTria.Models.ClienteServicoModel", b =>
                 {
+                    b.HasOne("TesteTria.Models.ClienteModel", "Cliente")
+                        .WithMany("ClienteServico")
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("TesteTria.Models.ServicoModel", "Servico")
-                        .WithMany()
-                        .HasForeignKey("ServicoId");
+                        .WithMany("ClienteServico")
+                        .HasForeignKey("ServicoId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }
