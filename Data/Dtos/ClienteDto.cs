@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TesteTria.Dtos
+namespace TesteProspeccaoClientes.Data.Dtos
 {
     public class ClienteDto
     {
@@ -12,6 +12,6 @@ namespace TesteTria.Dtos
         public string Email { get; set; }
         public string ConteudoConversa { get; set; }
         public DateTime DataHoraConversa { get; set; }
-        public List<string> NomeServico { get; set; }
+        public List<ServicoDto> Servicos { get; set; }
     }
 }

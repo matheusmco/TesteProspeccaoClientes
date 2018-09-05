@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TesteTria.Dtos;
-using TesteTria.Models;
+using TesteProspeccaoClientes.Data.Dtos;
+using TesteProspeccaoClientes.Data.Models;
 
-namespace TesteTria.Controllers
+namespace TesteProspeccaoClientes.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class ClienteController : ControllerBase
     {
-
         private Context _context;
         public ClienteController(Context context)
         {
@@ -19,74 +19,89 @@ namespace TesteTria.Controllers
         }
 
         [HttpPost]
-        public ActionResult<IEnumerable<ClienteDto>> Post(ClienteModel Cliente)
+        public ActionResult<ClienteDto> Post(ClienteDto ClienteDto)
         {
-            var clienteServico1 = new ClienteServicoModel();
-            var clienteServico2 = new ClienteServicoModel();
-            var cliente = new ClienteModel()
+            var Cliente = new ClienteModel()
             {
-                NomeEmpresa = "Teste",
-                NomeContato = "Teste",
-                Telefone = "Teste",
-                Email = "Teste",
-                ConteudoConversa = "Teste",
+                ClienteId = ClienteDto.ClienteId,
+                NomeEmpresa = ClienteDto.NomeEmpresa,
+                NomeContato = ClienteDto.NomeContato,
+                Telefone = ClienteDto.Telefone,
+                Email = ClienteDto.Email,
+                ConteudoConversa = ClienteDto.ConteudoConversa,
                 DataHoraConversa = DateTime.Now
             };
 
-            var servico1 = new ServicoModel()
+            if (Cliente.ClienteId > 0)
             {
-                NomeServico = "Teste 1"
-            };
-
-            var servico2 = new ServicoModel()
+                _context.Clientes.Update(Cliente);
+            }
+            else
             {
-                NomeServico = "Teste 2"
-            };
+                _context.Clientes.Add(Cliente);
+            }
 
-            clienteServico1.Cliente = cliente;
-            clienteServico1.Servico = servico1;
+            var listaClienteServicoAdd = new List<ClienteServicoModel>();
+            var listaClienteServicoUpdate = new List<ClienteServicoModel>();
+            foreach (ServicoDto ServicoDto in ClienteDto.Servicos)
+            {
+                var clienteServico = new ClienteServicoModel()
+                {
+                    ClienteId = Cliente.ClienteId,
+                    ServicoId = ServicoDto.ServicoId
+                };
 
-            clienteServico2.Cliente = cliente;
-            clienteServico2.Servico = servico2;
+                if (_context.ClientesServicos.Find(Cliente.ClienteId, ServicoDto.ServicoId) == null)
+                {
+                    listaClienteServicoAdd.Add(clienteServico);
+                }
+                else
+                {
+                    listaClienteServicoAdd.Add(clienteServico);
+                }
+            }
 
-            cliente.ClienteServico = new List<ClienteServicoModel>();
-            cliente.ClienteServico.Add(clienteServico1);
-            cliente.ClienteServico.Add(clienteServico2);
-
-            _context.Clientes.Add(cliente);
-            _context.Servicos.Add(servico1);
-            _context.Servicos.Add(servico2);
+            _context.ClientesServicos.AddRange(listaClienteServicoAdd);
+            _context.ClientesServicos.UpdateRange(listaClienteServicoUpdate);
 
             _context.SaveChanges();
 
             return _context.Clientes.Select(x => new ClienteDto()
             {
-                ClienteId = x.ClienteId, 
-                NomeEmpresa = x.NomeEmpresa, 
-                NomeContato = x.NomeContato, 
-                Telefone = x.Telefone, 
-                Email = x.Email, 
-                ConteudoConversa = x.ConteudoConversa, 
+                ClienteId = x.ClienteId,
+                NomeEmpresa = x.NomeEmpresa,
+                NomeContato = x.NomeContato,
+                Telefone = x.Telefone,
+                Email = x.Email,
+                ConteudoConversa = x.ConteudoConversa,
                 DataHoraConversa = x.DataHoraConversa,
-                NomeServico = x.ClienteServico.Select(c => c.Servico.NomeServico).ToList()
-            }).ToList();
+                Servicos = x.ClienteServico.Select(c => new ServicoDto()
+                {
+                    ServicoId = c.Servico.ServicoId,
+                    NomeServico = c.Servico.NomeServico
+                }).ToList()
+            }).First();
         }
 
         [HttpGet("Relatorio/{tipo}")]
-        public ActionResult<IEnumerable<ClienteModel>> Get(char tipo)
+        public ActionResult<IEnumerable<ClienteDto>> Get(char tipo)
         {
-            var clientes = _context.Clientes.ToList();
-            clientes.ForEach(x =>
+            var clientes = _context.Clientes.Select(x => new ClienteDto()
             {
-                x.ClienteServico = _context.ClientesServicos.Where(m => m.ClienteId == x.ClienteId).ToList();
-            });
-            clientes.ForEach(x =>
-            {
-                x.ClienteServico.ForEach(cs =>
+                ClienteId = x.ClienteId,
+                NomeEmpresa = x.NomeEmpresa,
+                NomeContato = x.NomeContato,
+                Telefone = x.Telefone,
+                Email = x.Email,
+                ConteudoConversa = x.ConteudoConversa,
+                DataHoraConversa = x.DataHoraConversa,
+                Servicos = x.ClienteServico.Select(c => new ServicoDto()
                 {
-                    cs.Servico = _context.Servicos.Where(s => s.ServicoId == cs.ServicoId).First();
-                });
-            });
+                    ServicoId = c.Servico.ServicoId,
+                    NomeServico = c.Servico.NomeServico
+                }).ToList()
+            }).ToList();
+
             if (tipo == 'H')
             {
                 return clientes.OrderBy(x => x.DataHoraConversa).ToList();
@@ -95,52 +110,34 @@ namespace TesteTria.Controllers
         }
 
         [HttpGet("{clienteId}")]
-        public ActionResult<ClienteModel> Get(int clienteId)
+        public ActionResult<ClienteDto> Get(int clienteId)
         {
-            var clientes = _context.Clientes.Where(x => x.ClienteId == clienteId).ToList();
-            if (clientes.Count == 0)
+            if (_context.Clientes.Find(clienteId) == null)
             {
                 return BadRequest("Não foi encontrado nenhum cliente com esse ID");
             }
-            return clientes.First();
-        }
 
-        private List<ClienteModel> ValorizarServico(List<ClienteModel> clientes)
-        {
-            // clientes.ForEach(x =>
-            // {
-            //     x.Servico = _context.ServicoModel.Where(a => a.ServicoId == x.ServicoId).First();
-            // });
-
-            return clientes;
+            return _context.Clientes.Select(x => new ClienteDto()
+            {
+                ClienteId = x.ClienteId,
+                NomeEmpresa = x.NomeEmpresa,
+                NomeContato = x.NomeContato,
+                Telefone = x.Telefone,
+                Email = x.Email,
+                ConteudoConversa = x.ConteudoConversa,
+                DataHoraConversa = x.DataHoraConversa,
+                Servicos = x.ClienteServico.Select(c => new ServicoDto()
+                {
+                    ServicoId = c.Servico.ServicoId,
+                    NomeServico = c.Servico.NomeServico
+                }).ToList()
+            }).Where(x => x.ClienteId == clienteId).First();
         }
 
         [HttpDelete("{clienteId}")]
         public void Delete(int clienteId)
         {
             _context.Clientes.Remove(_context.Clientes.Where(x => x.ClienteId == clienteId).First());
-            _context.SaveChanges();
-        }
-
-        [HttpGet]
-        [Route("PesquisarServicos")]
-        public ActionResult<IEnumerable<ServicoModel>> PesquisarServicos()
-        {
-            var a = _context.Servicos.ToList();
-            return a;
-        }
-
-        [HttpGet("Inicializar")]
-        public void Inicializar()
-        {
-            _context.Servicos.AddRange(
-                new ServicoModel("Teste 1"),
-                new ServicoModel("Teste 2"),
-                new ServicoModel("Teste 3"),
-                new ServicoModel("Teste 4"),
-                new ServicoModel("Teste 5"),
-                new ServicoModel("Teste 6")
-            );
             _context.SaveChanges();
         }
     }

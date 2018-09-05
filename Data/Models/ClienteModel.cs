@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TesteTria.Models
+namespace TesteProspeccaoClientes.Data.Models
 {
     public class ClienteModel
     {
@@ -13,8 +12,6 @@ namespace TesteTria.Models
         public string Email { get; set; }
         public string ConteudoConversa { get; set; }
         public DateTime DataHoraConversa { get; set; }
-        [NotMapped]
-        public List<int> ServicosIds { get; set; }
         public List<ClienteServicoModel> ClienteServico { get; set; }
     }
 }

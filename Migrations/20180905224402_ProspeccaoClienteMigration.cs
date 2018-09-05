@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace TesteTria.Migrations
+namespace TesteProspeccaoClientes.Migrations
 {
-    public partial class TesteMigrations : Migration
+    public partial class ProspeccaoClienteMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace TesteTria.Models
+namespace TesteProspeccaoClientes.Data.Models
 {
     public class Context : DbContext
     {
         public Context(DbContextOptions<Context> options) : base(options)
         {
-            //  this.Database. = s => System.Diagnostics.Debug.WriteLine(s);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using TesteTria.Models;
+using TesteProspeccaoClientes.Data.Models;
 
-namespace TesteTria
+namespace TesteProspeccaoClientes
 {
     public class Startup
     {
@@ -30,10 +23,6 @@ namespace TesteTria
             services.AddDbContext<Context>(options =>
                 options.UseSqlite("Data Source=TesteTria.db")
             );
-            // services.AddDbContext<Context>(options =>
-            //     options.UseMySql("server=mysql556.umbler.com;port=41890;database=bancotst;user=isael;password=Admin1502")                    
-            // );
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

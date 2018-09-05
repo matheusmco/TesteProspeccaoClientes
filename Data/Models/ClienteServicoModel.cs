@@ -1,4 +1,4 @@
-namespace TesteTria.Models
+namespace TesteProspeccaoClientes.Data.Models
 {
     public class ClienteServicoModel
     {

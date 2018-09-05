@@ -3,9 +3,9 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TesteTria.Models;
+using TesteProspeccaoClientes.Data.Models;
 
-namespace TesteTria.Migrations
+namespace TesteProspeccaoClientes.Migrations
 {
     [DbContext(typeof(Context))]
     partial class ContextModelSnapshot : ModelSnapshot
@@ -16,7 +16,7 @@ namespace TesteTria.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.2-rtm-30932");
 
-            modelBuilder.Entity("TesteTria.Models.ClienteModel", b =>
+            modelBuilder.Entity("TesteProspeccaoClientes.Data.Models.ClienteModel", b =>
                 {
                     b.Property<int>("ClienteId")
                         .ValueGeneratedOnAdd();
@@ -38,7 +38,7 @@ namespace TesteTria.Migrations
                     b.ToTable("Clientes");
                 });
 
-            modelBuilder.Entity("TesteTria.Models.ClienteServicoModel", b =>
+            modelBuilder.Entity("TesteProspeccaoClientes.Data.Models.ClienteServicoModel", b =>
                 {
                     b.Property<int>("ClienteId");
 
@@ -51,7 +51,7 @@ namespace TesteTria.Migrations
                     b.ToTable("ClientesServicos");
                 });
 
-            modelBuilder.Entity("TesteTria.Models.ServicoModel", b =>
+            modelBuilder.Entity("TesteProspeccaoClientes.Data.Models.ServicoModel", b =>
                 {
                     b.Property<int>("ServicoId")
                         .ValueGeneratedOnAdd();
@@ -63,14 +63,14 @@ namespace TesteTria.Migrations
                     b.ToTable("Servicos");
                 });
 
-            modelBuilder.Entity("TesteTria.Models.ClienteServicoModel", b =>
+            modelBuilder.Entity("TesteProspeccaoClientes.Data.Models.ClienteServicoModel", b =>
                 {
-                    b.HasOne("TesteTria.Models.ClienteModel", "Cliente")
+                    b.HasOne("TesteProspeccaoClientes.Data.Models.ClienteModel", "Cliente")
                         .WithMany("ClienteServico")
                         .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("TesteTria.Models.ServicoModel", "Servico")
+                    b.HasOne("TesteProspeccaoClientes.Data.Models.ServicoModel", "Servico")
                         .WithMany("ClienteServico")
                         .HasForeignKey("ServicoId")
                         .OnDelete(DeleteBehavior.Cascade);
