@@ -9,15 +9,14 @@ using TesteTria.Models;
 namespace TesteTria.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20180903230345_TesteMigrations")]
+    [Migration("20180904223907_TesteMigrations")]
     partial class TesteMigrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("ProductVersion", "2.1.2-rtm-30932");
 
             modelBuilder.Entity("TesteTria.Models.ClienteModel", b =>
                 {

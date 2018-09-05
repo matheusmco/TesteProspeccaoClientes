@@ -6,7 +6,7 @@ namespace TesteTria.Models
     {
         public Context(DbContextOptions<Context> options) : base(options)
         {
-
+            //  this.Database. = s => System.Diagnostics.Debug.WriteLine(s);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

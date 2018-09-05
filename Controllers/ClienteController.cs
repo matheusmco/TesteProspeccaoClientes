@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using TesteTria.Dtos;
 using TesteTria.Models;
 
 namespace TesteTria.Controllers
@@ -18,7 +19,7 @@ namespace TesteTria.Controllers
         }
 
         [HttpPost]
-        public ActionResult<IEnumerable<ClienteModel>> Post(ClienteModel Cliente)
+        public ActionResult<IEnumerable<ClienteDto>> Post(ClienteModel Cliente)
         {
             var clienteServico1 = new ClienteServicoModel();
             var clienteServico2 = new ClienteServicoModel();
@@ -58,7 +59,17 @@ namespace TesteTria.Controllers
 
             _context.SaveChanges();
 
-            return _context.Clientes.ToList();
+            return _context.Clientes.Select(x => new ClienteDto()
+            {
+                ClienteId = x.ClienteId, 
+                NomeEmpresa = x.NomeEmpresa, 
+                NomeContato = x.NomeContato, 
+                Telefone = x.Telefone, 
+                Email = x.Email, 
+                ConteudoConversa = x.ConteudoConversa, 
+                DataHoraConversa = x.DataHoraConversa,
+                NomeServico = x.ClienteServico.Select(c => c.Servico.NomeServico).ToList()
+            }).ToList();
         }
 
         [HttpGet("Relatorio/{tipo}")]

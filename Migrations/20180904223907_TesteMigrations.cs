@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TesteTria.Migrations
@@ -13,7 +12,7 @@ namespace TesteTria.Migrations
                 columns: table => new
                 {
                     ClienteId = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Sqlite:Autoincrement", true),
                     NomeEmpresa = table.Column<string>(nullable: true),
                     NomeContato = table.Column<string>(nullable: true),
                     Telefone = table.Column<string>(nullable: true),
@@ -31,7 +30,7 @@ namespace TesteTria.Migrations
                 columns: table => new
                 {
                     ServicoId = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("Sqlite:Autoincrement", true),
                     NomeServico = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
