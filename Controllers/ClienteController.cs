@@ -83,10 +83,10 @@ namespace TesteProspeccaoClientes.Controllers
             }).First();
         }
 
-        [HttpGet("Relatorio/{tipo}")]
-        public ActionResult<IEnumerable<ClienteDto>> Get(char tipo)
+        [HttpGet]
+        public ActionResult<IEnumerable<ClienteDto>> Get()
         {
-            var clientes = _context.Clientes.Select(x => new ClienteDto()
+            return _context.Clientes.Select(x => new ClienteDto()
             {
                 ClienteId = x.ClienteId,
                 NomeEmpresa = x.NomeEmpresa,
@@ -101,12 +101,6 @@ namespace TesteProspeccaoClientes.Controllers
                     NomeServico = c.Servico.NomeServico
                 }).ToList()
             }).ToList();
-
-            if (tipo == 'H')
-            {
-                return clientes.OrderBy(x => x.DataHoraConversa).ToList();
-            }
-            return clientes.OrderBy(x => x.NomeContato).ToList();
         }
 
         [HttpGet("{clienteId}")]
